@@ -22,8 +22,8 @@ class MapScreen extends StatelessWidget {
         ],
       ),
       body: GetBuilder<LocationController>(
-        init: controller,
-        builder: (value) => GoogleMap(
+        init: LocationController(),
+        builder: (controller) => GoogleMap(
           initialCameraPosition: CameraPosition(
             target: LatLng(controller.lat.value, controller.lng.value),
             zoom: 16
@@ -31,8 +31,8 @@ class MapScreen extends StatelessWidget {
           onMapCreated: controller.onMapCreated,
           myLocationEnabled: true,
           markers: controller.markers,
-        )
-      ),
+        ),
+      )
     );
   }
 }

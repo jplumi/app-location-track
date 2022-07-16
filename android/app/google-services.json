@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "664029010867",
+    "project_id": "easytravel-location-sharing",
+    "storage_bucket": "easytravel-location-sharing.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:664029010867:android:e957bad26a8da1e04b89c6",
+        "android_client_info": {
+          "package_name": "com.example.map_test"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "664029010867-v70lkl0gcknk9bd4v22mut8tkob75mep.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBZb-3WhOQpUJhe1LWD5pgwy2R5f1MBj0w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "664029010867-v70lkl0gcknk9bd4v22mut8tkob75mep.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

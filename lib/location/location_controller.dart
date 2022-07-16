@@ -1,6 +1,6 @@
 import 'dart:async';
-import 'dart:developer';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:geolocator/geolocator.dart';
@@ -13,15 +13,28 @@ class LocationController extends GetxController {
   final lng = 0.0.obs;
 
   late GoogleMapController _mapsController;
-  late StreamSubscription<Position> positionStream;
-  final markers = Set<Marker>();
+  late StreamSubscription<Position>? positionStream;
+  late StreamSubscription? vehiclesStream;
+
+  final _firestore = FirebaseFirestore.instance;
+
+  final markers = Set<Marker>().obs;
+
+  @override
+  void onClose() {
+    positionStream?.cancel();
+    vehiclesStream?.cancel();
+    _mapsController.dispose();
+    super.onClose();
+  }
 
   onMapCreated(GoogleMapController mapController) {
     _mapsController = mapController;
     loadMapStyle();
-    getPosition();
-    _mapsController.animateCamera(CameraUpdate.newLatLng(const LatLng(-27.6355, -52.2733)));
-    loadMarkers();
+    watchPosition();
+    _mapsController.animateCamera(CameraUpdate.newLatLng(const LatLng(-27.6349, -52.2737)));
+    // loadMarkers();
+    startListeningToVehicles();
   }
 
   loadMapStyle() async {
@@ -51,15 +64,7 @@ class LocationController extends GetxController {
         position: LatLng(-27.6379, -52.2742),
       ),
     ]);
-  }
-
-  @override
-  void onClose() {
-    if(positionStream != null) {
-      positionStream.cancel();
-    }
-    _mapsController.dispose();
-    super.onClose();
+    update();
   }
 
   Future _getCurrentLocation() async {
@@ -102,4 +107,27 @@ class LocationController extends GetxController {
     }
   }
 
+  void startListeningToVehicles() {
+    final collection = _firestore.collection('transports');
+    vehiclesStream = collection.snapshots()
+      .listen((QuerySnapshot<Map<String, dynamic>> snapshot) {
+        final docs = snapshot.docChanges;
+        for(DocumentChange<Map<String, dynamic>> doc in docs) {
+          final data = doc.doc.data()!;
+          final docId = doc.doc.id;
+          final latitude = data['latitude'];
+          final longitude = data['longitude'];
+          markers.add(Marker(
+            markerId: MarkerId(docId),
+            position: LatLng(latitude, longitude),
+            icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
+            infoWindow: InfoWindow(
+              title: 'Carro',
+              snippet: docId
+            )
+          ));
+          update();
+        }
+      },);
+  }
 }
